@@ -1,6 +1,7 @@
+
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { ShoppingBag, Menu, X, ChefHat } from 'lucide-react';
+import { ShoppingBag, Menu, X, ChefHat, History } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 
 const Navbar: React.FC = () => {
@@ -11,6 +12,7 @@ const Navbar: React.FC = () => {
   const navLinks = [
     { name: 'Home', path: '/' },
     { name: 'Menu', path: '/menu' },
+    { name: 'History', path: '/history', icon: <History size={16} /> },
     { name: 'Track Order', path: '/track' },
   ];
 
@@ -26,7 +28,7 @@ const Navbar: React.FC = () => {
               <ChefHat size={24} />
             </div>
             <span className="font-heading font-bold text-xl text-gray-900 tracking-tight">
-              FRIES & <span className="text-brand-orange">SIDES</span>
+              Fries&<span className="text-brand-orange">Sides</span>
             </span>
           </Link>
 
@@ -36,12 +38,13 @@ const Navbar: React.FC = () => {
               <Link
                 key={link.name}
                 to={link.path}
-                className={`font-medium transition-colors duration-200 ${
+                className={`font-medium flex items-center gap-1.5 transition-colors duration-200 ${
                   isActive(link.path) 
                     ? 'text-brand-orange' 
                     : 'text-gray-600 hover:text-brand-orange'
                 }`}
               >
+                {link.icon}
                 {link.name}
               </Link>
             ))}
@@ -81,12 +84,13 @@ const Navbar: React.FC = () => {
                 key={link.name}
                 to={link.path}
                 onClick={() => setIsMobileMenuOpen(false)}
-                className={`block px-3 py-2 rounded-md text-base font-medium ${
+                className={`flex items-center gap-3 px-3 py-3 rounded-xl text-base font-medium transition-all ${
                   isActive(link.path)
                     ? 'bg-brand-light text-brand-orange'
                     : 'text-gray-700 hover:bg-gray-50'
                 }`}
               >
+                {link.icon}
                 {link.name}
               </Link>
             ))}

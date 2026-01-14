@@ -1,8 +1,9 @@
+
 import React, { useState } from 'react';
 import { useCart } from '../context/CartContext';
-import { formatCurrency } from '../services/data';
-import { BANK_DETAILS, WHATSAPP_NUMBER } from '../types';
-import { MessageCircle, CreditCard, Smartphone } from 'lucide-react';
+import { formatCurrency, saveOrder } from '../services/data';
+import { BANK_DETAILS, WHATSAPP_NUMBER, Order } from '../types';
+import { MessageCircle, CreditCard, Send, Smartphone } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const Checkout: React.FC = () => {
@@ -19,12 +20,11 @@ const Checkout: React.FC = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const generateWhatsAppLink = () => {
-    // FORMATTING THE ORDER LIST
+  const generateWhatsAppLink = (orderId: string) => {
     const itemsList = cart.map(item => `- ${item.name} (x${item.quantity}) - ${formatCurrency(item.price * item.quantity)}`).join('%0A');
     
-    // UPDATED MESSAGE FOR NEW BRAND
-    const message = `*New Order from FRIES & SIDES* 🍟%0A%0A` +
+    const message = `*New Order from Fries&Sides* 🍽️%0A%0A` +
+      `*Order ID:* ${orderId}%0A` +
       `*Customer:* ${formData.name}%0A` +
       `*Phone:* ${formData.phone}%0A` +
       `*Address:* ${formData.address}%0A%0A` +
@@ -37,14 +37,30 @@ const Checkout: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const link = generateWhatsAppLink();
+    const orderId = `FNS-${Math.floor(1000 + Math.random() * 9000)}`;
+    
+    // Create the order object for history
+    const newOrder: Order = {
+      id: orderId,
+      customerName: formData.name,
+      items: [...cart],
+      total: cartTotal,
+      status: 'pending',
+      timestamp: Date.now()
+    };
+
+    // Save to local storage history
+    saveOrder(newOrder);
+
+    const link = generateWhatsAppLink(orderId);
     
     // Open WhatsApp
     window.open(link, '_blank');
     
-    // Clear cart and go home
+    // Clear cart and redirect
     clearCart();
-    navigate('/');
+    navigate('/history');
+    alert(`Order ${orderId} placed! Redirecting to your order history. Please send the message on WhatsApp to complete your order.`);
   };
 
   if (cart.length === 0) {
@@ -79,7 +95,7 @@ const Checkout: React.FC = () => {
                     value={formData.name}
                     onChange={handleChange}
                     type="text" 
-                    className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-orange outline-none" 
+                    className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-orange focus:border-transparent outline-none" 
                   />
                 </div>
                 <div>
@@ -90,7 +106,7 @@ const Checkout: React.FC = () => {
                     value={formData.phone}
                     onChange={handleChange}
                     type="tel" 
-                    className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-orange outline-none" 
+                    className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-orange focus:border-transparent outline-none" 
                   />
                 </div>
                 <div>
@@ -101,7 +117,7 @@ const Checkout: React.FC = () => {
                     value={formData.address}
                     onChange={handleChange}
                     rows={3} 
-                    className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-orange outline-none" 
+                    className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-orange focus:border-transparent outline-none" 
                   ></textarea>
                 </div>
                 <div>
@@ -112,7 +128,7 @@ const Checkout: React.FC = () => {
                     onChange={handleChange}
                     type="text" 
                     placeholder="e.g., Less spicy, extra sauce"
-                    className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-orange outline-none" 
+                    className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-orange focus:border-transparent outline-none" 
                   />
                 </div>
               </form>
@@ -180,6 +196,9 @@ const Checkout: React.FC = () => {
               >
                 <MessageCircle size={24} /> Confirm on WhatsApp
               </button>
+              <p className="text-center text-xs text-gray-400 mt-2">
+                You will be redirected to WhatsApp to send your order details.
+              </p>
             </div>
           </div>
         </div>
