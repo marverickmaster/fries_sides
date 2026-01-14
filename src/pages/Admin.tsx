@@ -1,4 +1,4 @@
-
+import { uploadToCloudinary } from '../services/imageService';
 import React, { useState, useEffect } from 'react';
 import { getMenu, saveMenu, formatCurrency, getSiteContent, saveSiteContent } from '../services/data';
 import { ADMIN_CREDENTIALS, MenuItem, HeroSlide, SiteContent } from '../types';
@@ -11,6 +11,9 @@ const Admin: React.FC = () => {
   const [password, setPassword] = useState('');
   const [items, setItems] = useState<MenuItem[]>([]);
   const [siteContent, setSiteContentState] = useState<SiteContent | null>(null);
+  
+  // New Uploading State
+  const [uploading, setUploading] = useState(false);
   
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -48,6 +51,32 @@ const Admin: React.FC = () => {
     setIsAuthenticated(false);
     localStorage.removeItem('maverick_admin_auth');
   };
+
+  // --- NEW: Image Upload Function ---
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Limit size to 5MB
+    if (file.size > 5 * 1024 * 1024) {
+      alert("File is too large. Please choose an image under 5MB.");
+      return;
+    }
+
+    try {
+      setUploading(true);
+      const url = await uploadToCloudinary(file);
+      
+      // Update the form data with the new URL
+      setFormData(prev => ({ ...prev, imageUrl: url }));
+    } catch (error) {
+      console.error("Upload failed", error);
+      alert("Failed to upload image");
+    } finally {
+      setUploading(false);
+    }
+  };
+  // ----------------------------------
 
   const handleSaveMenu = () => {
     const newItem: MenuItem = {
@@ -462,15 +491,39 @@ const Admin: React.FC = () => {
                 ></textarea>
               </div>
 
+              {/* --- MODIFIED SECTION: UPLOAD BUTTON --- */}
               <div>
-                <label className="block text-xs font-bold text-gray-400 uppercase mb-1">Image URL</label>
+                <label className="block text-xs font-bold text-gray-400 uppercase mb-1">Product Image</label>
+                
+                <div className="flex gap-2 mb-2">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    disabled={uploading}
+                    className="block w-full text-sm text-gray-500
+                      file:mr-4 file:py-2 file:px-4
+                      file:rounded-full file:border-0
+                      file:text-xs file:font-semibold
+                      file:bg-orange-50 file:text-brand-orange
+                      hover:file:bg-orange-100"
+                  />
+                </div>
+
+                {uploading && <p className="text-xs text-brand-orange animate-pulse mb-2">Uploading image...</p>}
+
                 <input 
                   type="text" 
                   value={formData.imageUrl}
-                  onChange={e => setFormData({ ...formData, imageUrl: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-brand-orange outline-none" 
+                  readOnly
+                  className="w-full px-4 py-2 bg-gray-50 text-gray-400 border border-gray-200 rounded-xl text-xs mb-2" 
                 />
+                
+                {formData.imageUrl && (
+                  <img src={formData.imageUrl} alt="Preview" className="h-20 w-20 object-cover rounded-lg border border-gray-200" />
+                )}
               </div>
+              {/* -------------------------------------- */}
 
               <div className="flex items-center gap-2 pt-2">
                 <input 
