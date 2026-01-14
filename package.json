@@ -1,32 +1,24 @@
 {
-  "name": "fries-and-sides",
+  "name": "fries&sides",
   "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "lint": "eslint .",
     "preview": "vite preview"
   },
   "dependencies": {
-    "firebase": "^11.0.2",
-    "lucide-react": "^0.556.0",
     "react": "^19.2.1",
     "react-dom": "^19.2.1",
-    "react-router-dom": "^7.10.1"
+    "react-router-dom": "^7.10.1",
+    "lucide-react": "^0.556.0",
+    "@google/genai": "^1.35.0"
   },
   "devDependencies": {
-    "@eslint/js": "^9.17.0",
-    "@types/react": "^19.0.2",
-    "@types/react-dom": "^19.0.2",
+    "@types/node": "^22.14.0",
     "@vitejs/plugin-react": "^5.0.0",
-    "eslint": "^9.17.0",
-    "eslint-plugin-react-hooks": "^5.1.0",
-    "eslint-plugin-react-refresh": "^0.4.16",
-    "globals": "^15.14.0",
     "typescript": "~5.8.2",
-    "typescript-eslint": "^8.18.2",
     "vite": "^6.2.0"
   }
 }
