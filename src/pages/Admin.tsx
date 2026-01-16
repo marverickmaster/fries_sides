@@ -1,4 +1,4 @@
-import { uploadToCloudinary } from '../services/imageservice';
+import { uploadToCloudinary } from '../services/imageService';
 import React, { useState, useEffect } from 'react';
 import { getMenu, saveMenu, formatCurrency, getSiteContent, saveSiteContent } from '../services/data';
 import { ADMIN_CREDENTIALS, MenuItem, HeroSlide, SiteContent } from '../types';
@@ -12,7 +12,7 @@ const Admin: React.FC = () => {
   const [items, setItems] = useState<MenuItem[]>([]);
   const [siteContent, setSiteContentState] = useState<SiteContent | null>(null);
   
-  // New Uploading State
+  // Uploading State
   const [uploading, setUploading] = useState(false);
   
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -52,12 +52,11 @@ const Admin: React.FC = () => {
     localStorage.removeItem('maverick_admin_auth');
   };
 
-  // --- NEW: Image Upload Function ---
+  // Image Upload Function
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Limit size to 5MB
     if (file.size > 5 * 1024 * 1024) {
       alert("File is too large. Please choose an image under 5MB.");
       return;
@@ -66,8 +65,6 @@ const Admin: React.FC = () => {
     try {
       setUploading(true);
       const url = await uploadToCloudinary(file);
-      
-      // Update the form data with the new URL
       setFormData(prev => ({ ...prev, imageUrl: url }));
     } catch (error) {
       console.error("Upload failed", error);
@@ -76,7 +73,6 @@ const Admin: React.FC = () => {
       setUploading(false);
     }
   };
-  // ----------------------------------
 
   const handleSaveMenu = () => {
     const newItem: MenuItem = {
@@ -491,10 +487,9 @@ const Admin: React.FC = () => {
                 ></textarea>
               </div>
 
-              {/* --- MODIFIED SECTION: UPLOAD BUTTON --- */}
+              {/* Upload Button */}
               <div>
                 <label className="block text-xs font-bold text-gray-400 uppercase mb-1">Product Image</label>
-                
                 <div className="flex gap-2 mb-2">
                   <input
                     type="file"
@@ -509,21 +504,17 @@ const Admin: React.FC = () => {
                       hover:file:bg-orange-100"
                   />
                 </div>
-
                 {uploading && <p className="text-xs text-brand-orange animate-pulse mb-2">Uploading image...</p>}
-
                 <input 
                   type="text" 
                   value={formData.imageUrl}
                   readOnly
                   className="w-full px-4 py-2 bg-gray-50 text-gray-400 border border-gray-200 rounded-xl text-xs mb-2" 
                 />
-                
                 {formData.imageUrl && (
                   <img src={formData.imageUrl} alt="Preview" className="h-20 w-20 object-cover rounded-lg border border-gray-200" />
                 )}
               </div>
-              {/* -------------------------------------- */}
 
               <div className="flex items-center gap-2 pt-2">
                 <input 
@@ -549,7 +540,7 @@ const Admin: React.FC = () => {
         </div>
       )}
 
-      {/* Custom Delete Confirmation Modal */}
+      {/* Delete Confirmation Modal */}
       {isDeleteModalOpen && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
           <div className="bg-white rounded-3xl w-full max-w-sm shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200 text-center">
