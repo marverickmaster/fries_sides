@@ -1,4 +1,4 @@
-import { uploadToCloudinary } from '../services/imageService';
+import { uploadToCloudinary } from '../services/imageservice';
 import React, { useState, useEffect } from 'react';
 import { getMenu, saveMenu, formatCurrency, getSiteContent, saveSiteContent } from '../services/data';
 import { ADMIN_CREDENTIALS, MenuItem, HeroSlide, SiteContent } from '../types';
